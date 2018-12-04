@@ -50,9 +50,9 @@ def total_time_asleep(guard_dict):
     return guard_total
 
 
-def max_total(total_dict):
+def key_with_max_value(total_dict):
     """
-    Returns the id of the guard with the max total time asleep
+    Returns the key of a dict with the maximum value
     """
     return max(total_dict.items(), key=operator.itemgetter(1))[0]
 
@@ -69,7 +69,7 @@ def max_minute(guard_dict, id_max):
             [np.arange(a, b) for a, b in zip(minutes[::2], minutes[1::2])]
         )
         minutes_counter.update(all_minutes)
-    return max_total(minutes_counter)
+    return key_with_max_value(minutes_counter)
 
 
 def part_one(shifts):
@@ -79,7 +79,7 @@ def part_one(shifts):
     """
     guard_dict = timeshifts(shifts)
     total_dict = total_time_asleep(guard_dict)
-    max_id = max_total(total_dict)
+    max_id = key_with_max_value(total_dict)
     max_min = max_minute(guard_dict, max_id)
     return max_id * max_min
 
@@ -105,3 +105,39 @@ test_shifts = '''[1518-11-01 00:00] Guard #10 begins shift
 assert part_one(test_shifts) == 240
 
 print(f'Solution for part 1: {part_one(shifts)}')
+
+# Part 2
+# We now need to find the minute where a guard stays asleep the most
+
+
+def max_minute_all_guards(guard_dict):
+    """
+    Computes the minutes where a guard is asleep the more often
+    Returns this minute time the guard id
+    """
+    max_minute_per_guard = {}
+    for guard_id, days in guard_dict.items():
+        minutes_counter = Counter()
+        for day, minutes in days.items():
+            # I list all the minutes were the guard is asleep and concatenate
+            # all spans for each day
+            all_minutes = np.concatenate(
+                [np.arange(a, b) for a, b in zip(minutes[::2], minutes[1::2])]
+            )
+            minutes_counter.update(all_minutes)
+        minute_most_asleep = key_with_max_value(minutes_counter)
+        max_minute_per_guard[guard_id] = (max(minutes_counter.values()),
+                                          minute_most_asleep)
+    guard_id_minute_most_asleep = key_with_max_value(max_minute_per_guard)
+    minute_most_asleep = max_minute_per_guard[guard_id_minute_most_asleep][1]
+    return guard_id_minute_most_asleep * minute_most_asleep
+
+
+def part_two(shifts):
+    guard_dict = timeshifts(shifts)
+    return max_minute_all_guards(guard_dict)
+
+
+assert part_two(test_shifts) == 4455
+
+print(f'Solution for part 2: {part_two(shifts)}')
