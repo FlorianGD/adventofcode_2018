@@ -61,7 +61,7 @@ knn = KNeighborsClassifier(n_neighbors=1, metric="manhattan")
 
 
 ```python
-knn.fit(points.values, np.arange(50))
+knn.fit(points[['x', 'y']].values, np.arange(50))
 ```
 
 
@@ -213,18 +213,6 @@ area10 = predictions_df.query('pred == 10').loc[:, ['x', 'y']].values
 
 
 ```python
-cityblock(area10[0], points.query('label == 10').loc[:, ['x', 'y']].values)
-```
-
-
-
-
-    34
-
-
-
-
-```python
 def center_coord(id):
     return points.loc[id, ['x', 'y']].values.reshape(-1, 2)
 
@@ -283,18 +271,6 @@ print(f'Solution for part 1: {len(area10) - 66}')
 
 ## Part 2
 
-
-```python
-np.sum(np.sum(, axis=1) < 10000)
-```
-
-
-
-
-    39398
-
-
-
 Let's compute the distance for our grid of points to all the points.
 
 
@@ -341,6 +317,6 @@ grid_chart.encode(color=alt.Color('sum_dist:Q', bin=True),
 
 
 
-![png](day06_files/day06_49_0.png)
+![png](day06_files/day06_47_0.png)
 
 
