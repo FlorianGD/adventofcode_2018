@@ -105,3 +105,6 @@ venv.bak/
 
 # Vscode
 .vscode
+
+# Data
+*.csv
