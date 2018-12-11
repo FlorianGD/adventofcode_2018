@@ -108,3 +108,6 @@ venv.bak/
 
 # Data
 *.csv
+.Rproj.user
+.Rhistory
+.Rproj
