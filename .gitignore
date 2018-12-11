@@ -110,4 +110,4 @@ venv.bak/
 *.csv
 .Rproj.user
 .Rhistory
-.Rproj
+*.Rproj
