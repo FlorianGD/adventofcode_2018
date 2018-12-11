@@ -25,6 +25,11 @@ def grid_power(grid_serial, size=300):
             grid[x, y] = cell_power(x, y, grid_serial)
     return grid
 
+# Another option would be
+# grid = np.fromfunction(cell_power, (301, 301), dtype=np.int64,
+#                        grid_serial=grid_serial)
+# This differs with the 0th row and column only (but we don't care if these)
+
 
 def squares_power(grid_serial, size=300):
     cells = grid_power(grid_serial, size)
