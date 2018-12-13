@@ -2,6 +2,7 @@
 
 import re
 from collections import deque
+from tqdm import tqdm
 
 # Part 1
 
@@ -12,7 +13,9 @@ def parse_input(file):
         initial_state = f.readline().strip()[15:]
         f.readline()  # skip blank line
         for line in f.readlines():
-            next_gen[line[:5]] = line[-2]
+            # Take only the lines generating a plant
+            if line[-2] == "#":
+                next_gen[line[:5]] = line[-2]
     return initial_state, next_gen
 
 
@@ -40,7 +43,7 @@ def compute_score(state, zero_ind):
 
 def play(init, next_dict, n_gen=20):
     state = init
-    for zero_ind in range(0, 2 * n_gen, 2):
+    for zero_ind in tqdm(range(0, 2 * n_gen, 2)):
         state = next_gen(state, next_dict)
     return compute_score(state, zero_ind + 2)
 
@@ -73,6 +76,11 @@ def play(init, next_dict, n_gen=20):
 # for i, state in enumerate(test_results.splitlines()):
 #     print(f'iter {i}: score {compute_score(state, 3)}')
 
+if __name__ == '__main__':
+    init, next_dict = parse_input("day12_input.txt")
+    print(f'Solution for part 1: {play(init, next_dict)}')
 
-init, next_dict = parse_input("day12_input.txt")
-print(f'Solution for part 1: {play(init, next_dict)}')
+# Part 2
+# 50000000000 (!) iterations required
+
+# See the notebook day12.ipynb
