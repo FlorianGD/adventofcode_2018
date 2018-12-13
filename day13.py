@@ -137,27 +137,5 @@ print(f'Solution for part 1: {crash_coord}')
 # We now want to know the coord of the last remaining cart after all the other
 # have crashed. I update the Grid class above.
 
-GRID = r"""/>-<\
-|   |
-| /<+-\
-| | | v
-\>+</ |
-  |   ^
-  \<->/"""
-
-grid = Grid(GRID)
-print(grid.move_until_last())
-
-GRID2 = r"""/><-\
-|   |
-| /<+-\
-| | | v
-\>+</ |
-  |   ^
-  \<->/"""
-
-grid = Grid(GRID2)
-print(grid.move_until_last())
-
 grid = Grid(day13)
 print(f'Soluton for part 2: {grid.move_until_last()}')
