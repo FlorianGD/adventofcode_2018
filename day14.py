@@ -39,8 +39,9 @@ def cook_until_pattern(pattern, recipes, elf1=0, elf2=1):
     pattern = [int(i) for i in pattern]
     previous_len = len(recipes)
     while True:
-        add_recipes(recipes, elf1, elf2)
-        elf1, elf2 = move_elves(recipes, elf1, elf2)
+        recipes.extend([int(r) for r in str(recipes[elf1] + recipes[elf2])])
+        elf1 = (elf1 + recipes[elf1] + 1) % len(recipes)
+        elf2 = (elf2 + recipes[elf2] + 1) % len(recipes)
         for last_ind in range(previous_len + 1, len(recipes) + 1):
             if last_ind - size >= 0:
                 for i, d in enumerate(pattern):
