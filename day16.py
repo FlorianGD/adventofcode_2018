@@ -150,3 +150,59 @@ assert count_possible(sample_test) == 3
 
 samples = parse_input("day16_input.txt")
 print(f'Solution for part 1: {test_all(samples)}')
+
+# Part 2
+
+
+def find_opcodes(samples):
+    """
+    Go through the samples to identify the operation associated with the code
+    """
+    operations = set([addr, addi, mulr, muli, banr, bani, borr, bori,
+                      setr, seti, gtir, gtri, gtrr, eqir, eqri, eqrr])
+    opcodes = [operations] * 16
+
+    # Utility to update the opcodes when one is found
+    def remove_found_opcode(opcodes, num_found, op_found):
+        for i, possibles in enumerate(opcodes):
+            if i != num_found:
+                possibles.difference_update(op_found)
+        return opcodes
+    # Loop through the samples
+    samples_iter = iter(samples)
+    while max(map(len, opcodes)) > 1:
+        sample = next(samples_iter)
+        possible = set()
+        for op in opcodes[sample.instruction.op]:
+            if op(sample.before, sample.instruction) == sample.after:
+                possible.add(op)
+        opcodes[sample.instruction.op] = (
+            opcodes[sample.instruction.op].intersection(possible)
+        )
+        if len(opcodes[sample.instruction.op]) == 1:
+            opcodes = remove_found_opcode(opcodes,
+                                          sample.instruction.op,
+                                          opcodes[sample.instruction.op])
+    return [fun for op in opcodes for fun in op]
+
+
+def parse_input_part2(filename):
+    prog = []
+    with open(filename) as f:
+        for i, line in enumerate(f.readlines()):
+            if i >= 3238:
+                prog.append(Instruction(*read_digits(line)))
+    return prog
+
+
+def exectute_program(program, opcodes):
+    registers = [0, 0, 0, 0]
+    for instr in program:
+        registers = opcodes[instr.op](registers, instr)
+    return registers
+
+
+program = parse_input_part2('day16_input.txt')
+opcodes = find_opcodes(samples)
+registers = exectute_program(program, opcodes)
+print(f'Solution for part 2: {registers[0]}')
