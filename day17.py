@@ -14,19 +14,25 @@ class Ground():
         self.ground = clay_dict
         self.min_y = min_y
         self.max_y = max_y
-        self.current = (500, min_y)
 
     def __repr__(self):
         return f'Ground from y={self.min_y} to y={self.max_y}'
 
     def __str__(self):
-        x_min = min(x for x, y in self.ground)
-        x_max = max(x for x, y in self.ground)
+        return self.draw((500, self.max_y + 1))
+
+    def draw(self, coord):
+        x0, y0 = coord
+        x_min = x0 - 40
+        x_max = x0 + 40
         lines = []
-        for y in range(self.min_y, self.max_y + 1):
-            line = ''
-            for x in range(x_min, x_max + 1):
-                line += self.ground.get((x, y), '.')
+        for y in range(y0 - 15, y0 + 15):
+            line = '\n'
+            for x in range(x_min, x_max):
+                if x == x0 and y == y0:
+                    line += '+'
+                else:
+                    line += self.ground.get((x, y), '.')
             lines.append(line)
         return '\n'.join(lines)
 
@@ -54,16 +60,22 @@ class Ground():
         """
         coord=(x, y). Goes down from coord until it reaches clay (#) or max_y
         """
+        new_coord = True
         x, y = coord
+        if self.ground.get((x, y+1), '') == '|':
+            # Already been there
+            return coord, not new_coord
         while True:
             if y == self.max_y:
-                return (x, y)
+                return (x, y), not new_coord
             y += 1
             if self.ground.get((x, y), '') == "#":
                 self.ground[(x, y - 1)] = "~"
                 break
+            if self.ground.get((x, y), '') == "|":
+                return (x, y), not new_coord
             self.ground[(x, y)] = '|'
-        return (x, y - 1)
+        return (x, y - 1), new_coord
 
     def spread(self, coord):
         """
@@ -95,10 +107,16 @@ class Ground():
         if wall_left and wall_right:
             return (x0, y - 1), keep_up
         if not wall_left and not wall_right:
+            for x in range(x_min - 1, x_max + 2):
+                self.ground[(x, y)] = '|'
             return (x_min - 1, y), (x_max + 1, y), not keep_up
         if wall_left and not wall_right:
+            for x in range(x_min, x_max + 2):
+                self.ground[(x, y)] = '|'
             return (x_max + 1, y), not keep_up
         if wall_right and not wall_left:
+            for x in range(x_min - 1, x_max + 1):
+                self.ground[(x, y)] = '|'
             return (x_min - 1, y), not keep_up
 
     def fill_up(self, coord):
@@ -124,19 +142,24 @@ class Ground():
         """
         if coord is None:
             coord = (500, self.min_y - 1)
-        while True:
-            coord = self.spill_down(coord)
+        if coord[1] == self.max_y:
+            print(self.draw(coord))
+            return
+        new_coord = True
+        while new_coord:
+            coord, new_coord = self.spill_down(coord)
             if coord[1] == self.max_y:
-                break
+                return
+            if not new_coord:
+                return
             coord = self.fill_up(coord)
             # If coord is a tuple, there is only one place to go down again
             if type(coord) == tuple:
                 continue
             coord0, coord1 = coord
-            # print(str(self.ground))
             self.flow_water(coord0)
             self.flow_water(coord1)
-            break
+            return
 
 
 with open("day17_input.txt") as f:
