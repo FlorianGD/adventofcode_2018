@@ -56,6 +56,10 @@ class Ground():
         count = Counter(self.ground.values())
         return count['|'] + count['~']
 
+    def count_still_water(self):
+        count = Counter(self.ground.values())
+        return count['~']
+
     def spill_down(self, coord):
         """
         coord=(x, y). Goes down from coord until it reaches clay (#) or max_y
@@ -182,3 +186,6 @@ print(test_ground.count_water())
 ground = Ground(day)
 ground.flow_water()
 print(f'Solution for part 1: {ground.count_water()}')
+
+# Part 2
+print(f'Solution for part 2: {ground.count_still_water()}')
