@@ -96,5 +96,11 @@ test = """.#.#...|#.
 
 test_land = Land(test)
 assert test_land.n_minutes() == 1147
-land = Land(day)
-print(f'Solution for part 1: {land.n_minutes()}')
+
+if __name__ == '__main__':
+
+    land = Land(day)
+    print(f'Solution for part 1: {land.n_minutes()}')
+
+# Part 2
+# See notebook
